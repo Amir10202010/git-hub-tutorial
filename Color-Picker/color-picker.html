@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Color Picker Example</title>
+    <style>
+      /* Style the color picker container */
+      .color-picker {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 20px;
+      }
+
+      /* Style the color picker type selector */
+      .color-picker select {
+        margin-bottom: 10px;
+      }
+
+      /* Style the solid color picker */
+      .solid-color {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .solid-color input[type="range"] {
+        width: 100%;
+        margin-right: 10px;
+      }
+
+      .solid-color .color-options {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      .solid-color .color-options div {
+        width: 30px;
+        height: 30px;
+        border: 1px solid #000;
+      }
+
+      /* Style the gradient picker */
+      .gradient-picker {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .gradient-picker input[type="range"] {
+        width: 100%;
+        margin-right: 10px;
+      }
+
+      .gradient-picker .gradient-colors {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      .gradient-picker .gradient-colors div {
+        width: 30px;
+        height: 30px;
+        border: 1px solid #000;
+      }
+
+      .gradient-picker .gradient-angle {
+        margin-bottom: 10px;
+      }
+
+      .gradient-picker .gradient-brightness {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .gradient-picker .gradient-brightness input[type="range"] {
+        width: 100%;
+        margin-right: 10px;
+      }
+
+      .gradient-picker .gradient-brightness .color-options {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      .gradient-picker .gradient-brightness .color-options div {
+        width: 30px;
+        height: 30px;
+        border: 1px solid #000;
+      }
+
+      .gradient-picker .transparency {
+        margin-bottom: 10px;
+      }
+
+      .gradient-picker .transparency input[type="range"] {
+        width: 100%;
+        margin-right: 10px;
+      }
+
+      /* Style the color display */
+      .color-display {
+        display: flex;
+        align-items: center;
+        margin-top: 20px;
+      }
+
+      .color-display span {
+        margin-right: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="color-picker">
+      <!-- Color picker type selector -->
+      <select>
+        <option value="solid">Solid Color</option>
+        <option value="linear">Linear Gradient</option>
+        <option value="radial">Radial Gradient</option>
+      </select>
+
+      <!-- Solid color picker -->
+      <div class="solid-color">
+        <!-- Color brightness palette -->
+        <input type="range" min="0" max="100"value="50" step="1" />
+
+        <!-- Color options -->
+        <div class="color-options">
+          <div style="background-color: #f00;"></div>
+          <div style="background-color: #0f0;"></div>
+          <div style="background-color: #00f;"></div>
+        </div>
+      </div>
+
+      <!-- Gradient picker -->
+      <div class="gradient-picker">
+        <!-- Gradient type selector -->
+        <select>
+          <option value="linear">Linear Gradient</option>
+          <option value="radial">Radial Gradient</option>
+        </select>
+
+        <!-- Gradient colors -->
+        <div class="gradient-colors">
+          <div style="background-color: #f00;"></div>
+          <div style="background-color: #0f0;"></div>
+        </div>
+
+        <!-- Gradient angle -->
+        <div class="gradient-angle">
+          <label for="gradient-angle-input">Angle:</label>
+          <input type="range" min="0" max="360" value="0" step="1" id="gradient-angle-input" />
+        </div>
+
+        <!-- Gradient brightness -->
+        <div class="gradient-brightness">
+          <!-- Color brightness palette -->
+          <input type="range" min="0" max="100" value="50" step="1" />
+
+          <!-- Color options -->
+          <div class="color-options">
+            <div style="background-color: #f00;"></div>
+            <div style="background-color: #0f0;"></div>
+          </div>
+        </div>
+
+        <!-- Transparency -->
+        <div class="transparency">
+          <label for="transparency-input">Transparency:</label>
+          <input type="range" min="0" max="1" step="0.1" value="1" id="transparency-input" />
+        </div>
+      </div>
+
+      <!-- Color display -->
+      <div class="color-display">
+        <span>HEX:</span>
+        <span id="hex-color"></span>
+        <span>RGB:</span>
+        <span id="rgb-color"></span>
+      </div>
+    </div>
+
+    <script>
+      // Get the color picker type selector
+      const colorPickerTypeSelector = document.querySelector('select[name="color-picker-type"]');
+
+      // Get the solid color picker elements
+      const solidColorBrightnessInput = document.querySelector('input[name="solid-color-brightness"]');
+      const solidColorColorOptions = document.querySelectorAll('.solid-color .color-options div');
+
+      // Get the gradient picker elements
+      const gradientTypeSelector = document.querySelector('select[name="gradient-type"]');
+      const gradientColors = document.querySelectorAll('.gradient-colors div');
+      const gradientAngleInput = document.querySelector('input[name="gradient-angle"]');
+      const gradientBrightnessInput = document.querySelector('input[name="gradient-brightness"]');
+      const gradientColorOptions = document.querySelectorAll('.gradient-brightness .color-options div');
+      const transparencyInput = document.querySelector('input[name="transparency"]');
+
+      // Get the color display elements
+      const hexColorDisplay = document.querySelector('#hex-color');
+      const rgbColorDisplay = document.querySelector('#rgb-color');
+
+      // Set the initial color display values
+      updateColorDisplay();
+
+      // Add event listeners to the color picker type selector
+      colorPickerTypeSelector.addEventListener('change', () => {
+        if (colorPickerTypeSelector.value === 'solid') {
+          // Show the solid color picker and hide the gradient picker
+          document.querySelector('.solid-color').style.display = 'block';
+          document.querySelector('.gradient-picker').style.display = 'none';
+        } else {
+          // Show the gradient picker and hide the solid color picker
+          document.querySelector('.solid-color').style.display = 'none';
+          document.querySelector('.gradient-picker').style.display = 'block';
+
+          // Set the initial gradient type to linear
+          gradientTypeSelector.value = 'linear';
+
+          // Set the initial gradient colors
+          gradientColors[0].style.backgroundColor = '#f00';
+          gradientColors[1].style.backgroundColor = '#0f0';
+
+          // Set the initial gradient angle
+          gradientAngleInput.value = 0;
+
+          // Set the initial gradient brightness
+          gradientBrightnessInput.value = 50;
+
+          // Set the initial gradient color options
+          gradientColorOptions[0].style.backgroundColor = '#f00';
+          gradientColorOptions[1].style.backgroundColor = '#0f0';
+
+          // Set the initial transparency
+          transparencyInput.value = 1;
+        }
+
+        // Update the color display values
+        updateColorDisplay();
+      });
+
+      // Add event listeners to the solid color brightness input
+      solidColorBrightnessInput.addEventListener('input', () => {
+        // Update the color options
+        solidColorColorOptions.forEach((option, index) => {
+          option.style.backgroundColor = `hsl(0, 100%, ${solidColorBrightnessInput.value}%)`;
+        });
+
+        // Update the color display values
+        updateColorDisplay();
+      });
+
+      // Add event listeners to the gradient type selector
+      gradientTypeSelector.addEventListener('change', () => {
+        // Update the gradient colors
+        if (gradientTypeSelector.value === 'linear') {
+          // Set the gradient colors to horizontal
+          gradientColors[0].style.left = '0%';
+          gradientColors[1].style.left = '100%';
+        } else {
+          // Set the gradient colors to circular
+          gradientColors[0].style.left = '0%';
+          gradientColors[1].style.left = '50%';
+          gradientColors[1].style.top = '50%';
+        }
+
+        // Update the color display values
+        updateColorDisplay();
+      });
+
+      // Add event listeners to the gradient colors
+      gradientColors.forEach((color, index) => {
+        color.addEventListener('input', () => {
+          // Update the gradient color options
+          gradientColorOptions[index].style.backgroundColor = color.style.backgroundColor;
+
+          // Update the color display values
+          updateColorDisplay();
+        });
+      });
+
+      // Add event listener to the gradient angle input
+      gradientAngleInput.addEventListener('input', () => {
+        // Update the gradient angle
+        gradientColors[0].style.transform = `rotate(${gradientAngleInput.value}deg)`;
+
+        // Update the color display values
+        updateColorDisplay();
+      });
+
+      // Add event listener to the gradient brightness input
+      gradientBrightnessInput.addEventListener('input', () => {
+        // Update the gradient color options
+        gradientColorOptions.forEach((option, index) => {
+          option.style.backgroundColor = `hsl(0, 100%, ${gradientBrightnessInput.value}%)`;
+        });
+
+        // Update the color display values
+        updateColorDisplay();
+      });
+
+      // Add event listener to the transparency input
+      transparencyInput.addEventListener('input', () => {
+        // Update the color display values
+        updateColorDisplay();
+      });
+
+      // Update the color display values
+      function updateColorDisplay() {
+        // Get the current color values
+        let colorValues = [];
+        if (colorPickerTypeSelector.value === 'solid') {
+          // Get the solid color value
+          const brightness = parseInt(solidColorBrightnessInput.value);
+          colorValues.push(`hsl(0, 100%, ${brightness}%)`);
+        } else {
+          // Get the gradient color values
+          gradientColors.forEach((color) => {
+            colorValues.push(color.style.backgroundColor);
+          });
+
+          // Get the gradient angle value
+          const angle = parseInt(gradientAngleInput.value);
+          colorValues.push(`rotate(${angle}deg)`);
+
+          // Get the gradient brightness value
+          const brightness = parseInt(gradientBrightnessInput.value);
+          colorValues.push(`hsl(0, 100%, ${brightness}%)`);
+
+          // Get the transparency value
+          const transparency = parseFloat(transparencyInput.value);
+          colorValues.push(transparency);
+        }
+
+       // Update the HEX color display value
+        hexColorDisplay.textContent = colorValues[0].replace('hsl(', '').replace('%', '').replace(')', '');
+
+        // Update the RGB color display value
+        const rgbColor = colorValues[0].replace('hsl(', '').replace('%', '').replace(')', '').split(',');
+        rgbColor[0] = Math.round(parseInt(rgbColor[0]) * transparency).toString();
+        rgbColor[1] = Math.round(parseInt(rgbColor[1]) * transparency).toString();
+        rgbColor[2] = Math.round(parseInt(rgbColor[2]) * transparency).toString();
+        rgbColorDisplay.textContent = `rgb(${rgbColor.join(',')})`;
+      }
+    </script>
+  </body>
+</html>
